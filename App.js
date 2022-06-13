@@ -1,11 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export default function App() {
+  const[loading, setLoading] = useState (true);
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <Text style={styles.title}> Bus Arrival Time: </Text>
+      <Text style={styles.arrivalTime}>
+        {loading ? "Loading...": "Loaded"}
+        </Text>
     </View>
   );
 }
