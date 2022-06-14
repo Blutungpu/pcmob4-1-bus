@@ -1,9 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
+import { setStatusBarNetworkActivityIndicatorVisible, StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 export default function App() {
   const[loading, setLoading] = useState (true);
+  const[arrival, setArrival] = useState ("");
   const BUSSTOP_URL = "https://arrivelah2.busrouter.sg/?id=83139"
 
 
@@ -13,18 +14,29 @@ export default function App() {
       return response.json();
     })
     .then((responseData) => {
-        console.log(responseData)
-    });
+        // console.log(responseData)
+        const myBus = responseData.services.filter(
+          (service) => service.no === "155"
+        )[0];
+        const duration_ms = myBus.next.duration_ms;
+        console.log(duration_ms);
+        const duration_mins = Math.floor(duration_ms/ 60000);
+        setArrival(`${duration_mins} minutes`);
+        setLoading(false);
+
+        
+      });
   }
 
   useEffect(() => {
-    loadBusStopData();
+    const interval = setInterval(loadBusStopData, 1000);
+    return () => clearInterval(interval);
   })
   return (
     <View style={styles.container}>
       <Text style={styles.title}> Bus Arrival Time: </Text>
       <Text style={styles.arrivalTime}>
-        {loading ? <ActivityIndicator color={'blue'}/>: "Loaded"}
+        {loading ? <ActivityIndicator color={'blue'}/>: arrival}
         </Text>
 
         <TouchableOpacity
